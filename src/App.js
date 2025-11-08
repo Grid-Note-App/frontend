@@ -11,7 +11,9 @@ import {
     Col,
     Spinner,
     Toast,
-    ToastContainer
+    ToastContainer,
+    Image,
+    Dropdown
 } from 'react-bootstrap';
 
 const CUSTOM_API_URL = process.env.REACT_APP_API_URL;
@@ -19,6 +21,7 @@ const CUSTOM_API_URL = process.env.REACT_APP_API_URL;
 function App() {
     const [notes, setNotes] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentUser, setCurrentUser] = useState(null);
 
     const [showModal, setShowModal] = useState(false);
     const [newNoteTitle, setNewNoteTitle] = useState("");
@@ -45,7 +48,7 @@ function App() {
     const fetchNotes = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(CUSTOM_API_URL);
+            const response = await axios.get(CUSTOM_API_URL + '/notes');
             setNotes(response.data);
         } catch (error) {
             console.error("Error fetching notes:", error);
@@ -60,7 +63,7 @@ function App() {
             return;
         }
         try {
-            const response = await axios.post(CUSTOM_API_URL, {
+            const response = await axios.post(CUSTOM_API_URL + '/notes' , {
                 Title: newNoteTitle,
                 Text: newNoteBody
             });
@@ -76,7 +79,7 @@ function App() {
     const confirmDelete = async () => {
         if (!noteToDelete) return;
         try {
-            await axios.delete(`${CUSTOM_API_URL}/${noteToDelete}`);
+            await axios.delete(`${CUSTOM_API_URL}/notes/${noteToDelete}`);
             setNotes(notes.filter(note => note._id !== noteToDelete));
             setShowToast(true);
         } catch (error) {
@@ -96,7 +99,17 @@ function App() {
         }
     };
 
+    const fetchCurrentUser = async () => {
+        try {
+            const res = await axios.get(`${CUSTOM_API_URL}/currentUser`, { withCredentials: true });
+            setCurrentUser(res.data);
+        } catch (err) {
+            console.error("Error loading current user", err);
+        }
+    };
+
     useEffect(() => {
+        fetchCurrentUser();
         fetchNotes();
     }, []);
 
@@ -110,23 +123,46 @@ function App() {
         <div className="App">
             <Navbar className="navbar-custom mb-4" expand="lg">
                 <Container className="d-flex justify-content-between align-items-center">
-                    <Navbar.Brand href="#home">Notes App</Navbar.Brand>
-                    <div className="d-flex gap-2">
-                        <Button variant="outline-green" onClick={handleShowModal}>
+                    <Navbar.Brand href="#">Notes App</Navbar.Brand>
+
+                    <div className="d-flex align-items-center gap-3">
+                        <Button variant="outline-green" onClick={() => setShowModal(true)}>
                             Add Note
                         </Button>
 
-                        <Button
-                            variant="outline-danger"
-                            onClick={handleLogout}
-                            className="rounded-pill px-4"
-                        >
+                        <Button variant="outline-danger" className="rounded-pill px-3" onClick={() => window.location.href = '/logout'}>
                             Logout
                         </Button>
+
+                        {currentUser && (
+                            <Dropdown align="end">
+                                <Dropdown.Toggle
+                                    variant="link"
+                                    id="dropdown-user"
+                                    className="d-flex align-items-center text-decoration-none"
+                                >
+                                    <Image
+                                        src={currentUser.pictureUrl}
+                                        roundedCircle
+                                        width={38}
+                                        height={38}
+                                        className="me-2 border"
+                                        alt="User Avatar"
+                                    />
+                                    <span className="fw-semibold">{currentUser.firstName}</span>
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                    <Dropdown.Header>
+                                        <div>{currentUser.firstName} {currentUser.lastName}</div>
+                                        <div className="text-muted small">{currentUser.email}</div>
+                                    </Dropdown.Header>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        )}
                     </div>
                 </Container>
             </Navbar>
-
             <Container>
                 {loading ? (
                     <div className="text-center">

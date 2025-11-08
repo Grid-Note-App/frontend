@@ -42,4 +42,4 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/grid_lab1_frontend:lab2
           # 2. Передаємо build-arg для Lab 2 (відносний шлях для Nginx proxy)
           build-args: |
-            REACT_APP_API_URL=/api/notes
+            REACT_APP_API_URL=/api
