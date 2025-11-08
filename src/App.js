@@ -14,7 +14,7 @@ import {
     ToastContainer
 } from 'react-bootstrap';
 
-const CUSTOM_API_URL = process.env.REACT_APP_API_URL || 'https://gridlab1-341943604061.europe-west1.run.app/notes';
+const CUSTOM_API_URL = process.env.REACT_APP_API_URL;
 
 function App() {
     const [notes, setNotes] = useState([]);
@@ -86,6 +86,16 @@ function App() {
         }
     };
 
+    const handleLogout = async () => {
+        try {
+            await axios.post(`${CUSTOM_API_URL}/logout`, {}, { withCredentials: true });
+            window.location.href = '/';
+        } catch (error) {
+            console.error("Error during logout:", error);
+            alert("Logout failed.");
+        }
+    };
+
     useEffect(() => {
         fetchNotes();
     }, []);
@@ -99,11 +109,21 @@ function App() {
     return (
         <div className="App">
             <Navbar className="navbar-custom mb-4" expand="lg">
-                <Container>
+                <Container className="d-flex justify-content-between align-items-center">
                     <Navbar.Brand href="#home">Notes App</Navbar.Brand>
-                    <Button variant="outline-green" onClick={handleShowModal}>
-                        Add Note
-                    </Button>
+                    <div className="d-flex gap-2">
+                        <Button variant="outline-green" onClick={handleShowModal}>
+                            Add Note
+                        </Button>
+
+                        <Button
+                            variant="outline-danger"
+                            onClick={handleLogout}
+                            className="rounded-pill px-4"
+                        >
+                            Logout
+                        </Button>
+                    </div>
                 </Container>
             </Navbar>
 
@@ -199,11 +219,7 @@ function App() {
                 </Modal.Footer>
             </Modal>
 
-            <ToastContainer
-                className="p-3"
-                position="bottom-end"
-                style={{ zIndex: 1060 }}
-            >
+            <ToastContainer className="p-3" position="bottom-end" style={{ zIndex: 1060 }}>
                 <Toast
                     onClose={() => setShowToast(false)}
                     show={showToast}
@@ -214,7 +230,6 @@ function App() {
                     <Toast.Body className="text-white">Note deleted successfully!</Toast.Body>
                 </Toast>
             </ToastContainer>
-
         </div>
     );
 }
