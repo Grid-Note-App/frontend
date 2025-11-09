@@ -7,7 +7,7 @@ import MarkdownView from './MarkdownView';
 const CUSTOM_API_URL = process.env.REACT_APP_API_URL; // "/api"
 const AI_API_URL = `${CUSTOM_API_URL}/ai`;
 
-export default function ChatWindow({ currentUser }) {
+export default function ChatWindow({ currentUser, onNotesUpdated }) {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [socket, setSocket] = useState(null);
@@ -110,6 +110,10 @@ export default function ChatWindow({ currentUser }) {
             await axios.post(`${AI_API_URL}/note-chat/confirm-creation`, null, {
                 params: { chatId: currentUser.id, confirmed },
             });
+
+            if (confirmed && typeof onNotesUpdated === 'function') {
+                onNotesUpdated();
+            }
         } catch (err) {
             console.error('Error sending confirmation', err);
         } finally {

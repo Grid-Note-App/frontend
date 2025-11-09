@@ -336,7 +336,7 @@ function App() {
                 </Toast>
 
             </ToastContainer>
-            {currentUser && <ChatSidebar currentUser={currentUser} />}
+            {currentUser && <ChatSidebar currentUser={currentUser} onNotesUpdated={fetchNotes} />}
         </div>
     );
 }

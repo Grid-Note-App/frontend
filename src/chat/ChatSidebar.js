@@ -3,9 +3,9 @@ import { Card } from "react-bootstrap";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ChatWindow from "./ChatWindow";
 
-export default function ChatSidebar({ currentUser }) {
+export default function ChatSidebar({ currentUser, onNotesUpdated }) {
     const [open, setOpen] = useState(false);
-    const [width, setWidth] = useState(window.innerWidth * 0.4); // ← дефолт 40%
+    const [width, setWidth] = useState(window.innerWidth * 0.4);
     const [dragging, setDragging] = useState(false);
     const sidebarRef = useRef(null);
 
@@ -71,7 +71,7 @@ export default function ChatSidebar({ currentUser }) {
                 {/* === Контент чата === */}
                 <Card className="border-0 shadow-sm h-100 rounded-0">
                     <Card.Body className="p-0 position-relative">
-                        <ChatWindow currentUser={currentUser} />
+                        <ChatWindow currentUser={currentUser} onNotesUpdated={onNotesUpdated} />
                     </Card.Body>
                 </Card>
 
