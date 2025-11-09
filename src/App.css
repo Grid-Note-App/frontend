@@ -1,40 +1,40 @@
 .App {
-  text-align: center;
+    text-align: center;
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+    height: 40vmin;
+    pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
 }
 
 .App-link {
-  color: #61dafb;
+    color: #61dafb;
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .expired-note {
@@ -59,7 +59,7 @@
 }
 
 .note-preview-card {
-    background-color: #fffde7; /* как .note-card */
+    background-color: #fffde7;
     border-radius: 8px;
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
     border: 1px solid #f0e68c;
@@ -92,7 +92,6 @@
     margin-top: 1rem;
     margin-bottom: 0.5rem;
     color: #3e2723;
-
 }
 
 .markdown-body p {
@@ -116,10 +115,6 @@
 .markdown-body strong {
     color: #1b5e20;
 }
-
-
-
-
 
 /* === Overlay === */
 .chat-overlay {
@@ -151,7 +146,7 @@
     transform: translateX(0);
 }
 
-/* === Toggle attached (прикреплённый шеврон) === */
+/* === Toggle attached === */
 .chat-toggle-attached {
     position: absolute;
     left: -36px;
@@ -233,4 +228,135 @@
     .resize-handle {
         display: none;
     }
+}
+
+/* === Chat Window layout === */
+.chat-body {
+    overflow-y: auto;
+    padding: 1.2rem 1rem;
+    height: calc(100vh - 130px);
+    background: #fffefc;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === Messages === */
+.chat-message {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: flex-end;
+    animation: fadeIn 0.25s ease-in;
+}
+
+.chat-message.from-user {
+    justify-content: flex-end;
+}
+
+.chat-message.from-assistant {
+    justify-content: flex-start;
+}
+
+/* === Bubbles === */
+.bubble {
+    max-width: 80%;
+    padding: 0.75rem 1rem;
+    border-radius: 18px;
+    line-height: 1.55;
+    word-break: break-word;
+    font-size: 0.95rem;
+    white-space: pre-wrap; /* ✅ переносы сохраняются */
+    text-align: left; /* ✅ выравнивание как в обычном тексте */
+    transition: all 0.2s ease-in-out;
+}
+
+.from-user .bubble {
+    background: linear-gradient(135deg, #007bff, #4dabf7);
+    color: white;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 3px 6px rgba(0, 123, 255, 0.25);
+}
+
+.from-assistant .bubble {
+    background: #f9f9f9;
+    color: #212529;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Hover glow */
+.from-user .bubble:hover,
+.from-assistant .bubble:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* Markdown alignment fix */
+.bubble .markdown-body {
+    margin: 0;
+    padding: 0;
+}
+
+/* === Footer === */
+.chat-footer {
+    position: sticky;
+    bottom: 0;
+    background: #fffdf5;
+    border-top: 1px solid #eee;
+    padding: 0.8rem 1rem;
+}
+
+.chat-footer form input {
+    border-radius: 18px;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+}
+
+.chat-footer button {
+    border-radius: 18px;
+    padding: 0.55rem 1.2rem;
+}
+
+/* === Scrollbar === */
+.chat-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
+
+/* === Animations === */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === Chat textarea (auto-resize) === */
+.chat-textarea {
+    border-radius: 18px;
+    padding: 0.6rem 1rem;
+    resize: none;
+    border: 1px solid #ccc;
+    overflow-y: hidden;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    max-height: 180px;
+    transition: height 0.1s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.chat-textarea:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
+}
+
+.chat-footer button {
+    border-radius: 18px;
+    padding: 0.55rem 1.2rem;
 }

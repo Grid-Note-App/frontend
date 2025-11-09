@@ -17,6 +17,14 @@ export default function ChatWindow({ currentUser }) {
     const [sending, setSending] = useState(false);
 
     const chatEndRef = useRef(null);
+    const textareaRef = useRef(null);
+
+    useEffect(() => {
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+        textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }, [input]);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -137,54 +145,65 @@ export default function ChatWindow({ currentUser }) {
     };
 
     return (
-        <Card className="mt-4 shadow-sm">
-            <Card.Header className="d-flex justify-content-between align-items-center">
+        <Card className="shadow-sm h-100 border-0 rounded-0">
+            <Card.Header className="d-flex justify-content-between align-items-center bg-light border-0 border-bottom">
                 <strong>AI Chat Assistant</strong>
                 <Button size="sm" variant="outline-danger" onClick={handleClear}>
                     Clear
                 </Button>
             </Card.Header>
 
-            <Card.Body style={{ maxHeight: '400px', overflowY: 'auto' }}>
+            <Card.Body className="chat-body flex-grow-1">
                 {messages.map((m, i) => (
-                    <div key={i} className={`mb-2 ${m.type === 'USER' ? 'text-end' : 'text-start'}`}>
-                        <div
-                            className={`p-2 rounded ${m.type === 'USER' ? 'bg-primary text-white' : 'bg-light'}`}
-                            style={{ display: 'inline-block', maxWidth: '80%' }}
-                        >
-                            {m.type === 'ASSISTANT' ? (
-                                <MarkdownView content={m.content} />
-                            ) : (
-                                <span style={{ whiteSpace: 'pre-wrap' }}>{m.content}</span>
-                            )}
+                    <div
+                        key={i}
+                        className={`chat-message ${m.type === 'USER' ? 'from-user' : 'from-assistant'}`}
+                    >
+                        <div className="bubble">
+                            {m.type === 'ASSISTANT'
+                                ? <MarkdownView content={m.content} />
+                                : <span style={{ whiteSpace: 'pre-wrap' }}>{m.content}</span>}
                         </div>
-
                     </div>
                 ))}
                 <div ref={chatEndRef}></div>
             </Card.Body>
 
-            <Card.Footer>
+
+            <Card.Footer className="chat-footer bg-light">
                 <Form
                     onSubmit={(e) => {
                         e.preventDefault();
                         sendMessage();
                     }}
-                    className="d-flex"
+                    className="d-flex align-items-end gap-2 w-100"
                 >
                     <Form.Control
-                        type="text"
+                        as="textarea"
+                        ref={textareaRef}
+                        rows={1}
                         placeholder="Type your message..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         disabled={sending}
+                        className="chat-textarea"
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        }}
                     />
-                    <Button type="submit" className="ms-2" disabled={sending}>
+                    <Button
+                        type="submit"
+                        disabled={sending}
+                        className="align-self-end"
+                        style={{ whiteSpace: 'nowrap' }}
+                    >
                         {sending ? <Spinner animation="border" size="sm" /> : 'Send'}
                     </Button>
                 </Form>
             </Card.Footer>
-
 
             <Modal show={showConfirm} onHide={() => handleConfirm(false)} centered>
                 <Modal.Header closeButton className="bg-warning bg-opacity-25">
