@@ -24,6 +24,7 @@ function App() {
     const [loading, setLoading] = useState(true);
     const [currentUser, setCurrentUser] = useState(null);
     const [remindAt, setRemindAt] = useState("");
+    const [notifToast, setNotifToast] = useState({ show: false, title: "", text: "" });
 
     const [showModal, setShowModal] = useState(false);
     const [newNoteTitle, setNewNoteTitle] = useState("");
@@ -41,6 +42,30 @@ function App() {
         setNoteToDelete(null);
         setShowDeleteConfirm(false);
     };
+
+    useEffect(() => {
+        if (!currentUser) return;
+
+        const eventSource = new EventSource(`${CUSTOM_API_URL}/notifications/stream`, { withCredentials: true });
+
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === "noteDue") {
+                setNotifToast({
+                    show: true,
+                    title: data.Title,
+                    text: data.Text
+                });
+            }
+        };
+
+        eventSource.onerror = (err) => {
+            console.error("SSE error:", err);
+        };
+
+        return () => eventSource.close();
+    }, [currentUser]);
+
 
     const handleShowDeleteConfirm = (id) => {
         setNoteToDelete(id);
@@ -293,6 +318,22 @@ function App() {
                 >
                     <Toast.Body className="text-white">Note deleted successfully!</Toast.Body>
                 </Toast>
+                <Toast
+                    onClose={() => setNotifToast({ ...notifToast, show: false })}
+                    show={notifToast.show}
+                    delay={5000}
+                    autohide
+                    bg="info"
+                >
+                    <Toast.Header>
+                        <strong className="me-auto">🔔 Reminder</strong>
+                    </Toast.Header>
+                    <Toast.Body className="text-white">
+                        <strong>{notifToast.title}</strong>
+                        <div>{notifToast.text}</div>
+                    </Toast.Body>
+                </Toast>
+
             </ToastContainer>
         </div>
     );
