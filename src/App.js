@@ -15,6 +15,7 @@ import {
     Image,
     Dropdown
 } from 'react-bootstrap';
+import './App.css';
 
 const CUSTOM_API_URL = process.env.REACT_APP_API_URL;
 
@@ -22,6 +23,7 @@ function App() {
     const [notes, setNotes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentUser, setCurrentUser] = useState(null);
+    const [remindAt, setRemindAt] = useState("");
 
     const [showModal, setShowModal] = useState(false);
     const [newNoteTitle, setNewNoteTitle] = useState("");
@@ -57,20 +59,27 @@ function App() {
         }
     };
 
+    const isExpired = (remindAt) => {
+        if (!remindAt) return false;
+        return new Date(remindAt) < new Date();
+    };
+
     const handleSaveNote = async () => {
         if (newNoteTitle.trim() === "" || newNoteBody.trim() === "") {
             alert("Title and text are required.");
             return;
         }
         try {
-            const response = await axios.post(CUSTOM_API_URL + '/notes' , {
+            const response = await axios.post(CUSTOM_API_URL + '/notes', {
                 Title: newNoteTitle,
-                Text: newNoteBody
+                Text: newNoteBody,
+                remindAt: remindAt ? new Date(remindAt).toISOString() : null
             });
             setNotes([response.data, ...notes]);
             handleCloseModal();
             setNewNoteTitle("");
             setNewNoteBody("");
+            setRemindAt("");
         } catch (error) {
             console.error("Error adding note:", error);
         }
@@ -173,16 +182,23 @@ function App() {
                     <Row xs={1} md={2} lg={3} className="g-4">
                         {notes.map((note) => (
                             <Col key={note._id}>
-                                <Card className="note-card h-100">
+                                <Card className={`note-card h-100 ${isExpired(note.remindAt) ? 'expired-note' : ''}`}>
                                     <Card.Body>
                                         <Card.Title>{note.Title}</Card.Title>
                                         <Card.Text style={{ whiteSpace: 'pre-wrap' }}>
                                             {note.Text}
                                         </Card.Text>
+
+                                        {note.remindAt && (
+                                            <div className={`mt-2 small ${isExpired(note.remindAt) ? 'text-muted' : 'text-warning'}`}>
+                                                <i className="bi bi-bell"></i> Reminder: {formatDate(note.remindAt)}
+                                            </div>
+                                        )}
                                     </Card.Body>
+
                                     <Card.Footer className="d-flex justify-content-between align-items-center">
                                         <small className="text-muted">
-                                            {formatDate(note.CreatedAt)}
+                                            Created: {formatDate(note.CreatedAt)}
                                         </small>
                                         <Button
                                             variant="outline-danger"
@@ -225,6 +241,18 @@ function App() {
                                 onChange={(e) => setNewNoteBody(e.target.value)}
                                 className="textarea-notepad"
                             />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="formRemindAt">
+                            <Form.Label>Remind at</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                value={remindAt}
+                                onChange={(e) => setRemindAt(e.target.value)}
+                            />
+                            <Form.Text className="text-muted">
+                                Optional — choose when you want to be reminded.
+                            </Form.Text>
                         </Form.Group>
                     </Form>
                 </Modal.Body>

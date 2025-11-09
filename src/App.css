@@ -36,3 +36,20 @@
     transform: rotate(360deg);
   }
 }
+
+.expired-note {
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.expired-note:hover {
+    opacity: 0.8;
+}
+
+.text-warning i.bi-bell {
+    margin-right: 4px;
+}
+
+.text-muted i.bi-bell {
+    margin-right: 4px;
+}
