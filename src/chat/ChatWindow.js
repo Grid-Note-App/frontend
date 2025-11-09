@@ -34,7 +34,7 @@ export default function ChatWindow({ currentUser, onNotesUpdated }) {
     useEffect(() => {
         if (!currentUser) return;
 
-        const ws = new WebSocket(`${window.location.origin}${AI_API_URL}/chat?chatId=${currentUser.id}`);
+        const ws = new WebSocket(`${window.location.origin}${AI_API_URL}/chat?chatId=${currentUser.id}&token=${currentUser.idToken}`);
 
         ws.onopen = () => console.log('✅ WebSocket connected');
         ws.onclose = () => console.log('❌ WebSocket closed');
