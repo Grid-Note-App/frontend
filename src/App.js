@@ -16,6 +16,7 @@ import {
     Dropdown
 } from 'react-bootstrap';
 import './App.css';
+import ChatSidebar from "./chat/ChatSidebar";
 
 const CUSTOM_API_URL = process.env.REACT_APP_API_URL;
 
@@ -335,6 +336,7 @@ function App() {
                 </Toast>
 
             </ToastContainer>
+            {currentUser && <ChatSidebar currentUser={currentUser} />}
         </div>
     );
 }
