@@ -186,7 +186,7 @@ export default function ChatWindow({ currentUser }) {
             </Card.Footer>
 
 
-            <Modal show={showConfirm} onHide={() => setShowConfirm(false)} centered>
+            <Modal show={showConfirm} onHide={() => handleConfirm(false)} centered>
                 <Modal.Header closeButton className="bg-warning bg-opacity-25">
                     <Modal.Title className="fw-bold text-dark">📒 Confirm Note Creation</Modal.Title>
                 </Modal.Header>

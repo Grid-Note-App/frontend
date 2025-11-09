@@ -121,7 +121,6 @@
 
 
 
-
 /* === Overlay === */
 .chat-overlay {
     position: fixed;
@@ -138,24 +137,26 @@
     top: 0;
     right: 0;
     height: 100vh;
-    background-color: #fffdf2;
+    background-color: #fffdf5;
     box-shadow: -3px 0 12px rgba(0, 0, 0, 0.25);
-    border-left: 2px solid #fdd835;
+    border-left: 3px solid #fdd835;
     transform: translateX(100%);
     transition: transform 0.35s ease;
     z-index: 1055;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .chat-sidebar.open {
     transform: translateX(0);
 }
-/* === Toggle (фиксированный, двигается динамически по right) === */
-.chat-toggle-fixed {
-    position: fixed;
+
+/* === Toggle attached (прикреплённый шеврон) === */
+.chat-toggle-attached {
+    position: absolute;
+    left: -36px;
     top: 50%;
     transform: translateY(-50%);
-    right: 0;
     background-color: #ffa726;
     border-radius: 8px 0 0 8px;
     width: 36px;
@@ -166,20 +167,13 @@
     color: #fff;
     cursor: pointer;
     box-shadow: -2px 2px 6px rgba(0, 0, 0, 0.25);
-    /* ключевое: синхронизуем с .chat-sidebar */
-    transition: right 0.35s cubic-bezier(0.45, 0, 0.25, 1), background-color 0.25s ease;
-    z-index: 1100;
+    transition: background-color 0.25s ease;
+    z-index: 2;
 }
 
-/* во время ресайза убираем transition, чтобы якорь ехал «в ногу» с мышью */
-.chat-toggle-fixed.dragging {
-    transition: none;
-}
-
-.chat-toggle-fixed:hover {
+.chat-toggle-attached:hover {
     background-color: #fb8c00;
 }
-
 
 /* === Resize handle === */
 .resize-handle {
@@ -196,7 +190,7 @@
     background: rgba(255, 167, 38, 0.25);
 }
 
-/* === Mobile === */
+/* === Mobile adaptation === */
 @media (max-width: 768px) {
     .chat-sidebar {
         width: 100vw !important;
@@ -214,23 +208,23 @@
         transform: translateY(0);
     }
 
-    .chat-toggle-fixed {
+    .chat-toggle-attached {
+        left: 50%;
+        bottom: 100%;
         top: auto;
-        bottom: 0;
-        right: 50%;
-        transform: translateX(50%) translateY(0);
+        transform: translateX(-50%);
+        border-radius: 12px 12px 0 0;
         width: 90px;
         height: 32px;
-        border-radius: 12px 12px 0 0;
         background-color: #ffa726;
         box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
     }
 
-    .chat-toggle-fixed svg {
+    .chat-toggle-attached svg {
         display: none;
     }
 
-    .chat-toggle-fixed::before {
+    .chat-toggle-attached::before {
         content: "Chat";
         font-weight: 600;
         color: #fff;
@@ -239,19 +233,4 @@
     .resize-handle {
         display: none;
     }
-
-    .chat-sidebar.open::before {
-        content: "";
-        display: block;
-        position: absolute;
-        top: 6px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 36px;
-        height: 4px;
-        background: #ccc;
-        border-radius: 3px;
-    }
 }
-
-
